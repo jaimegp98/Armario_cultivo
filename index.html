@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <title>Armario de cultivo UPM</title>
+    </head>
+    <body>
+        <h1 class="text-4xl text-center py-24">Armario de cultivo UPM</h1>
+        <div class="flex items-center justify-center flex-wrap mx-20">
+            <div class="w-1/2 flex justify-center border rounded p-4">
+                <iframe class="h-72 w-full" src="https://thingspeak.com/channels/2139985/charts/1?bgcolor=FFE7E7&color=%23d62020&days=1&dynamic=true&results=100&title=Temperatura+actual&type=spline&xaxis=Tiempo&yaxis=%C2%BAC"></iframe>
+            </div>
+            <div class="w-1/2 flex justify-center border rounded p-4">
+                <iframe class="h-72 w-full" src="https://thingspeak.com/channels/2139985/charts/2?bgcolor=D8FEFF&color=%230080ff&days=1&dynamic=true&results=100&title=Humedad+actual&type=spline&xaxis=Tiempo&yaxis=%25"></iframe>
+            </div>
+
+            <div class="w-1/2 flex justify-center border rounded p-4">
+                <iframe class="h-72 w-full" src="https://thingspeak.com/channels/2139985/charts/3?bgcolor=FFE7E7&color=%23d62020&days=1&dynamic=true&results=100&title=Temperatura+parte+superior&type=spline&xaxis=Tiempo&yaxis=%C2%BAC"></iframe>
+            </div>
+            <div class="w-1/2 flex justify-center border rounded p-4">
+                <iframe class="h-72 w-full" src="https://thingspeak.com/channels/2139985/charts/4?bgcolor=D8FEFF&color=%230080ff&days=1&dynamic=true&results=100&title=Humedad+parte+superior&type=spline&xaxis=Tiempo&yaxis=%25"></iframe>
+            </div>
+
+            <div class="w-1/2 flex justify-center border rounded p-4">
+                <iframe class="h-72 w-full" src="https://thingspeak.com/channels/2139985/charts/5?bgcolor=FFE7E7&color=%23d62020&days=1&dynamic=true&results=100&title=Temperatura+parte+inferior&type=spline&xaxis=Tiempo&yaxis=%C2%BAC"></iframe>
+            </div>
+            <div class="w-1/2 flex justify-center border rounded p-4">
+                <iframe class="h-72 w-full" src="https://thingspeak.com/channels/2139985/charts/6?bgcolor=D8FEFF&color=%230080ff&days=1&dynamic=true&results=100&title=Humedad+parte+inferior&type=spline&xaxis=Tiempo&yaxis=%25"></iframe>
+            </div>
+
+            <div class="w-1/2 flex justify-center border rounded p-4">
+                <iframe class="h-72 w-full" src="https://thingspeak.com/channels/2139985/charts/7?bgcolor=FFE7E7&color=%23d62020&days=1&dynamic=true&results=100&title=Temperatura+deseada&type=spline&xaxis=Tiempo&yaxis=%C2%BAC"></iframe>
+            </div>
+            <div class="w-1/2 flex justify-center border rounded p-4">
+                <iframe class="h-72 w-full" src="https://thingspeak.com/channels/2139985/charts/8?bgcolor=D8FEFF&color=%230080ff&days=1&dynamic=true&results=100&title=Humedad+deseada&type=spline&xaxis=Tiempo&yaxis=%25"></iframe>
+            </div>
+        </div>
+        <div class="w-full flex justify-center items-center">
+            <form id="miFormulario" class="max-w-md mx-auto p-6 bg-gray-300 rounded flex flex-col justify-between mt-4">
+                <div class="mb-4 flex items-center">
+                    <i class="fas fa-thermometer-half mr-2"></i>
+                    <label for="Tdeseada" class="inline-block w-24">Temperatura:</label>
+                    <input type="number" name="Tdeseada" required class="w-32 py-2 px-4 bg-gray-200 border rounded focus:border-green-500 transition duration-300">
+                </div>
+                <div class="mb-4 flex items-center">
+                    <i class="fas fa-tint mr-2"></i>
+                    <label for="Hdeseada" class="inline-block w-24">Humedad:</label>
+                    <input type="number" name="Hdeseada" required class="w-32 py-2 px-4 bg-gray-200 border rounded focus:border-green-500 transition duration-300">
+                </div>
+                <div class="flex justify-center">
+                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded cursor-pointer hover:bg-green-600 transition duration-300">ENVIAR</button>
+                </div>
+            </form>
+        </div>
+        <button id="mostrarMensajes" class="bg-blue-500 text-white py-2 px-4 rounded cursor-pointer hover:bg-blue-600 transition duration-300">Mostrar Mensajes</button>
+        <a id="enlaceDrive" href="https://drive.google.com/drive/folders/121LYZJKbm8KB9nT05iJqeqnY0B9Wtz7-?hl=es" target="_blank" class="bg-blue-500 text-white py-2 px-4 rounded cursor-pointer hover:bg-blue-600 transition duration-300">Ver fotografías</a>
+        <div id="cuadroMensajes" class="bg-black p-4 rounded shadow-md mt-4 hidden max-h-40 overflow-y-auto">
+            <ul id="listaMensajes" class="list-disc list-inside text-white">
+            </ul>
+        </div>
+    </body>
+
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                type: 'POST',
+                url: `http://localhost:3000/subscribe/Acciones`,
+                contentType: 'application/json',
+                success: function(response) {
+                    console.log('Solicitud POST exitosa:', response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error en la solicitud POST:', error);
+                }
+            });
+
+            const fetchMessages = () => {
+                $.ajax({
+                    type: 'GET',
+                    url: `http://localhost:3000/messages`,
+                    contentType: 'application/json',
+                    success: function(response) {
+                        console.log(response);
+                        response.messages.forEach(function(message) {
+                            $('#listaMensajes').append(`<li>${message}</li>`);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en la solicitud GET:', error);
+                    }
+                });
+            };
+
+            setInterval(fetchMessages, 10000);
+
+            $('#miFormulario').submit(function(event) {
+                event.preventDefault(); 
+
+                const Tdeseada = $('input[name=Tdeseada]').val();
+                const Hdeseada = $('input[name=Hdeseada]').val();
+
+                console.log(`http://localhost:3000/send/${Tdeseada}/${Hdeseada}`)
+
+                $.ajax({
+                    type: 'POST',
+                    url: `http://localhost:3000/send/${Tdeseada}/${Hdeseada}`,
+                    contentType: 'application/json',
+                    success: function(response) {
+                        console.log('Solicitud POST exitosa:', response);
+                        $('input[name=Tdeseada]').val('');
+                        $('input[name=Hdeseada]').val('');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en la solicitud POST:', error);
+                    }
+                });
+            });
+
+            $('#cuadroMensajes').hide();
+
+            $('#mostrarMensajes').click(function() {
+                // Alterna la visibilidad del cuadro de mensajes
+                $('#cuadroMensajes').toggle();
+            });
+        });
+    </script>
+</html>
