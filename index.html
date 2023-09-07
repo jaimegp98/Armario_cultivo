@@ -68,7 +68,7 @@
         $(document).ready(function() {
             $.ajax({
                 type: 'POST',
-                url: `http://localhost:3000/subscribe/Acciones`,
+                url: `/.netlify/functions/subscribe/Acciones`,
                 contentType: 'application/json',
                 success: function(response) {
                     console.log('Solicitud POST exitosa:', response);
@@ -81,7 +81,7 @@
             const fetchMessages = () => {
                 $.ajax({
                     type: 'GET',
-                    url: `http://localhost:3000/messages`,
+                    url: `/.netlify/functions/messages`,
                     contentType: 'application/json',
                     success: function(response) {
                         console.log(response);
@@ -103,11 +103,11 @@
                 const Tdeseada = $('input[name=Tdeseada]').val();
                 const Hdeseada = $('input[name=Hdeseada]').val();
 
-                console.log(`http://localhost:3000/send/${Tdeseada}/${Hdeseada}`)
+                console.log(`/.netlify/functions/send/${Tdeseada}/${Hdeseada}`)
 
                 $.ajax({
                     type: 'POST',
-                    url: `http://localhost:3000/send/${Tdeseada}/${Hdeseada}`,
+                    url: `/.netlify/functions/send/${Tdeseada}/${Hdeseada}`,
                     contentType: 'application/json',
                     success: function(response) {
                         console.log('Solicitud POST exitosa:', response);
