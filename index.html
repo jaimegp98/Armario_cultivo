@@ -68,7 +68,7 @@
         $(document).ready(function() {
             $.ajax({
                 type: 'POST',
-                url: `/.netlify/functions/subscribe/Acciones`,
+                url: `https://api-amario-cultivo-f0sn.onrender.com/subscribe/Acciones`,
                 contentType: 'application/json',
                 success: function(response) {
                     console.log('Solicitud POST exitosa:', response);
@@ -81,7 +81,7 @@
             const fetchMessages = () => {
                 $.ajax({
                     type: 'GET',
-                    url: `/.netlify/functions/messages`,
+                    url: `https://api-amario-cultivo-f0sn.onrender.com/messages`,
                     contentType: 'application/json',
                     success: function(response) {
                         console.log(response);
@@ -103,11 +103,11 @@
                 const Tdeseada = $('input[name=Tdeseada]').val();
                 const Hdeseada = $('input[name=Hdeseada]').val();
 
-                console.log(`/.netlify/functions/send/${Tdeseada}/${Hdeseada}`)
+                console.log(`https://api-amario-cultivo-f0sn.onrender.com/send/${Tdeseada}/${Hdeseada}`)
 
                 $.ajax({
                     type: 'POST',
-                    url: `/.netlify/functions/send/${Tdeseada}/${Hdeseada}`,
+                    url: `https://api-amario-cultivo-f0sn.onrender.com/send/${Tdeseada}/${Hdeseada}`,
                     contentType: 'application/json',
                     success: function(response) {
                         console.log('Solicitud POST exitosa:', response);
